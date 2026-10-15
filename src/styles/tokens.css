@@ -1,0 +1,172 @@
+/* Kodeluma design tokens — version 1.0, synchronized with 02_DESIGN.md */
+:root {
+  --kl-ink: #10243A;
+  --kl-primary: #2563EB;
+  --kl-primary-hover: #1D4ED8;
+  --kl-primary-soft: #EFF5FF;
+  --kl-amber: #F4B544;
+  --kl-bg: #F8FAFD;
+  --kl-surface: #FFFFFF;
+  --kl-surface-soft: #F1F5FA;
+  --kl-text: #1C2D40;
+  --kl-muted: #62748A;
+  --kl-border: #E2E9F1;
+  --kl-success: #16805D;
+  --kl-warning: #A16207;
+  --kl-danger: #C24141;
+  --kl-code-bg: #101B2B;
+  --kl-code-border: #23364E;
+
+  --kl-radius-sm: 8px;
+  --kl-radius-md: 12px;
+  --kl-radius-lg: 16px;
+  --kl-radius-xl: 22px;
+  --kl-radius-pill: 999px;
+
+  --kl-shadow-card: 0 8px 28px rgba(16, 36, 58, 0.05);
+  --kl-shadow-card-hover: 0 16px 42px rgba(16, 36, 58, 0.10);
+
+  --kl-font-heading: var(--font-jakarta), 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --kl-font-body: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
+  --kl-font-code: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Bootstrap theme override overrides */
+  --bs-primary: #2563EB;
+  --bs-primary-rgb: 37, 99, 235;
+  --bs-body-color: #1C2D40;
+  --bs-body-bg: #F8FAFD;
+  --bs-border-color: #E2E9F1;
+  --bs-heading-color: #10243A;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--kl-bg);
+  color: var(--kl-text);
+  font-family: var(--kl-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--kl-ink);
+  font-family: var(--kl-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+button, a, input, textarea, select {
+  accent-color: var(--kl-primary);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.42);
+  outline-offset: 3px;
+}
+
+/* Base custom classes mapped to design system tokens */
+.kl-card {
+  background: var(--kl-surface);
+  border: 1px solid var(--kl-border);
+  border-radius: var(--kl-radius-lg);
+  box-shadow: var(--kl-shadow-card);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.kl-card:hover {
+  box-shadow: var(--kl-shadow-card-hover);
+}
+
+.kl-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--kl-shadow-card-hover);
+}
+
+.kl-btn-primary {
+  background: var(--kl-primary);
+  border-color: var(--kl-primary);
+  color: #ffffff !important;
+  border-radius: 11px;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.kl-btn-primary:hover {
+  background: var(--kl-primary-hover);
+  border-color: var(--kl-primary-hover);
+  transform: translateY(-1px);
+}
+
+.kl-btn-secondary {
+  background: var(--kl-surface);
+  border: 1px solid var(--kl-border);
+  color: var(--kl-ink) !important;
+  border-radius: 11px;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.kl-btn-secondary:hover {
+  background: var(--kl-surface-soft);
+  border-color: #cbd5e1;
+}
+
+.kl-btn-outline {
+  border: 1px solid var(--kl-border);
+  color: var(--kl-ink);
+  background: var(--kl-surface);
+  border-radius: 11px;
+  font-weight: 600;
+}
+
+.kl-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--kl-radius-pill);
+}
+
+.kl-badge-primary {
+  background: var(--kl-primary-soft);
+  color: var(--kl-primary);
+}
+
+.kl-badge-amber {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.kl-badge-neutral {
+  background: var(--kl-surface-soft);
+  color: var(--kl-muted);
+}
+
+.kl-badge-success {
+  background: #ECFDF5;
+  color: var(--kl-success);
+}
+
+.kl-code-panel {
+  background: var(--kl-code-bg);
+  border: 1px solid var(--kl-code-border);
+  border-radius: var(--kl-radius-md);
+  color: #E2E8F0;
+  font-family: var(--kl-font-code);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
