@@ -5,18 +5,19 @@ import { PublicNavbar } from '@/components/layout/PublicNavbar';
 import { Footer } from '@/components/layout/Footer';
 import { KodelumaLottie } from '@/components/ui/KodelumaLottie';
 import { Compass, Terminal } from 'lucide-react';
+import { CourseRepository } from '@/lib/repositories/courseRepository';
 
 export const metadata: Metadata = {
   title: 'Jalur Belajar Terstruktur (Learning Paths) | KodeLuma',
   description:
-    'Pilih alur pembelajaran yang dirancang untuk membimbingmu dari pemula hingga siap berkarir: Web Development, Python Developer, Database Engineer, dan DevOps.',
+    'Temukan jalur belajar pemrograman yang bertahap dan lihat kelas yang sudah tersedia di KodeLuma.',
   alternates: {
     canonical: '/learning-paths',
   },
   openGraph: {
     title: 'Jalur Belajar Terstruktur (Learning Paths) | KodeLuma',
     description:
-      'Kurikulum terarah dari dasar hingga mahir dengan modul interaktif, kuis berkala, dan proyek portofolio.',
+      'Jelajahi urutan kelas dan fokus materi pada setiap jalur belajar KodeLuma.',
     url: 'https://kodeluma.azzamcodex.id/learning-paths',
     siteName: 'KodeLuma by Azzam Codex',
     images: [
@@ -41,7 +42,11 @@ export const metadata: Metadata = {
 
 import { LearningPathsViewer } from '@/components/learning-paths/LearningPathsViewer';
 
-export default function LearningPathsPage() {
+export const revalidate = 60;
+
+export default async function LearningPathsPage() {
+  const publishedCourses = await CourseRepository.listPublishedCourses();
+  const availableCourseSlugs = publishedCourses.map((course) => course.slug);
   return (
     <div className="d-flex flex-column min-vh-100 bg-light">
       <PublicNavbar />
@@ -53,10 +58,10 @@ export default function LearningPathsPage() {
             <div className="col-lg-7">
               <div className="kl-eyebrow">ROADMAP KURIKULUM LINTAS TEKNOLOGI</div>
               <h1 className="h1 fw-bold mb-3" style={{ color: 'var(--kl-ink)' }}>
-                12 Jalur Belajar Terstruktur
+                Temukan jalur belajarmu
               </h1>
               <p className="kl-lead mb-0" style={{ maxWidth: '680px' }}>
-                Dari nol hingga siap berkarir. Pilih alur pembelajaran yang dirancang bertahap dengan modul teks mendalam, 22 kurikulum standar industri, kuis berkala, dan proyek portofolio nyata.
+                Jelajahi urutan kelas dari dasar ke lanjutan. Pilih bidang yang menarik buatmu, lihat fokus setiap langkah, dan mulai dari kelas yang sudah terbit.
               </p>
             </div>
             <div className="col-lg-5">
@@ -73,7 +78,7 @@ export default function LearningPathsPage() {
           </div>
 
           {/* Interactive Learning Paths Viewer (Roadmap + Catalog) */}
-          <LearningPathsViewer />
+          <LearningPathsViewer availableCourseSlugs={availableCourseSlugs} />
 
           {/* Bottom Action CTA */}
           <div className="text-center mt-5 p-5 bg-white rounded-4 border">
@@ -87,7 +92,7 @@ export default function LearningPathsPage() {
                 className="kl-btn-primary d-inline-flex align-items-center gap-2 text-decoration-none py-2.5 px-4 small"
               >
                 <Compass size={16} />
-                <span>Lihat Semua Kelas ({22} Kursus)</span>
+                <span>Lihat Semua Kelas</span>
               </Link>
               <Link
                 href="/lab"

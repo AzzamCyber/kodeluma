@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Code2, Compass } from 'lucide-react';
 import gsap from 'gsap';
@@ -11,7 +11,26 @@ interface HeroProps {
   user?: { displayName: string; role: string } | null;
 }
 
-export function Hero({ user }: HeroProps) {
+export function Hero({ user: initialUser }: HeroProps) {
+  const [currentUser, setCurrentUser] = useState(initialUser);
+
+  useEffect(() => {
+    if (initialUser !== undefined) return;
+    let isMounted = true;
+    fetch('/api/v1/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (isMounted && json?.data?.user) {
+          setCurrentUser(json.data.user);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [initialUser]);
+
+  const user = currentUser ?? initialUser;
   const containerRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const artRef = useRef<HTMLDivElement>(null);

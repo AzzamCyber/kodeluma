@@ -17,14 +17,17 @@ export class LearningService {
     courseId: string,
     lessonId: string
   ): Promise<ProgressSummary> {
-    const isEnrolled = await LearningRepository.isEnrolled(userId, courseId);
-    if (!isEnrolled) {
-      await LearningRepository.enroll(userId, courseId);
+    const [course, lesson] = await Promise.all([
+      CourseRepository.findCourseById(courseId),
+      CourseRepository.findLessonById(lessonId),
+    ]);
+    if (!course || course.status !== 'published' || !lesson || lesson.courseId !== courseId || lesson.status !== 'published') {
+      throw new Error('INVALID_LESSON: Pelajaran tidak tersedia untuk diselesaikan.');
     }
 
-    const lesson = await CourseRepository.findLessonById(lessonId);
-    if (!lesson || lesson.courseId !== courseId) {
-      throw new Error('INVALID_LESSON: Pelajaran tidak sesuai dengan kursus yang dipilih.');
+    const isEnrolled = await LearningRepository.isEnrolled(userId, courseId);
+    if (!isEnrolled) {
+      await LearningRepository.enroll(userId, courseId, course.curriculumVersion);
     }
 
     await LearningRepository.completeLesson(userId, courseId, lessonId);

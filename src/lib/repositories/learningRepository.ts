@@ -18,6 +18,10 @@ export class LearningRepository {
     return `kl:v1:complete:${userId}:${courseId}:v${version}`;
   }
 
+  private static lessonActivityIndex(userId: string): string {
+    return `kl:v1:user:${userId}:lesson-activity`;
+  }
+
   private static quizResultKey(userId: string, courseId: string, version: number = 1): string {
     return `kl:v1:quizresult:${userId}:${courseId}:v${version}`;
   }
@@ -82,9 +86,33 @@ export class LearningRepository {
     version: number = 1
   ): Promise<{ alreadyCompleted: boolean }> {
     const key = this.completionKey(userId, courseId, version);
-    // SADD returns 1 if newly added, 0 if already existed (idempotent)
-    const added = await redis.sadd(key, lessonId);
+    // Keep the first completion and its timestamp atomic. Old SET members remain undated.
+    const added = await redis.eval<[string, number], number>(
+      `local added = redis.call('SADD', KEYS[1], ARGV[1])
+       if added == 1 then redis.call('ZADD', KEYS[2], ARGV[2], ARGV[1]) end
+       return added`,
+      [key, this.lessonActivityIndex(userId)],
+      [lessonId, Date.now()]
+    );
     return { alreadyCompleted: added === 0 };
+  }
+
+  static async getRecentLessonActivity(
+    userId: string,
+    limit: number = 6
+  ): Promise<{ lessonId: string; completedAt: string }[]> {
+    const key = this.lessonActivityIndex(userId);
+    const boundedLimit = Math.max(1, Math.min(10, Math.floor(limit)));
+    const lessonIds = await redis.zrange<string[]>(key, 0, boundedLimit - 1, { rev: true });
+    if (lessonIds.length === 0) return [];
+
+    const pipeline = redis.pipeline();
+    for (const lessonId of lessonIds) pipeline.zscore(key, lessonId);
+    const scores = await pipeline.exec();
+    return lessonIds.flatMap((lessonId, index) => {
+      const score = scores[index] as number | null;
+      return score === null ? [] : [{ lessonId, completedAt: new Date(score).toISOString() }];
+    });
   }
 
   static async getCompletedLessons(

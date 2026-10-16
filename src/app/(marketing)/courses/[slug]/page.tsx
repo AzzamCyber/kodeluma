@@ -11,24 +11,38 @@ import {
   ArrowRight,
   ShieldCheck,
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth/session';
 import { CourseRepository } from '@/lib/repositories/courseRepository';
 import { ProjectRepository } from '@/lib/repositories/projectRepository';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
-import { StudentNavbar } from '@/components/layout/StudentNavbar';
 import { Footer } from '@/components/layout/Footer';
+import { cache } from 'react';
 import { MOCK_COURSES, MOCK_LESSONS, MOCK_QUIZZES, MOCK_PROJECTS } from '@/lib/mockData';
+
+export const revalidate = 3600;
 
 interface CourseDetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: CourseDetailPageProps): Promise<Metadata> {
-  const { slug } = await params;
+const getCourseBySlugMemo = cache(async (slug: string) => {
   let course = await CourseRepository.findCourseBySlug(slug);
   if (!course) {
     course = MOCK_COURSES.find((c) => c.slug === slug) || null;
   }
+  return course;
+});
+
+export async function generateStaticParams() {
+  const published = await CourseRepository.listPublishedCourses();
+  const courses = published && published.length > 0 ? published : MOCK_COURSES;
+  return courses.map((course) => ({
+    slug: course.slug,
+  }));
+}
+
+export async function generateMetadata({ params }: CourseDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const course = await getCourseBySlugMemo(slug);
 
   if (!course) {
     return {
@@ -74,19 +88,15 @@ export async function generateMetadata({ params }: CourseDetailPageProps): Promi
 
 export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
   const { slug } = await params;
-  const user = await getCurrentUser();
 
-  // Try Redis first, fallback to mock data
-  let course = await CourseRepository.findCourseBySlug(slug);
+  // Try Redis first via memoized lookup, fallback to mock data
+  const course = await getCourseBySlugMemo(slug);
   let lessons = course ? await CourseRepository.getLessonsForCourse(course.id) : [];
   let quiz = course ? await CourseRepository.getQuizForCourse(course.id) : null;
 
-  if (!course) {
-    course = MOCK_COURSES.find((c) => c.slug === slug) || null;
-    if (course) {
-      lessons = MOCK_LESSONS[course.id] || [];
-      quiz = MOCK_QUIZZES[course.id] || null;
-    }
+  if (course && lessons.length === 0) {
+    lessons = MOCK_LESSONS[course.id] || [];
+    quiz = MOCK_QUIZZES[course.id] || null;
   }
 
   if (!course) {
@@ -165,7 +175,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      {user ? <StudentNavbar user={user} /> : <PublicNavbar />}
+      <PublicNavbar />
 
       <main id="main-content" className="flex-grow-1 py-5">
         <div className="container">
@@ -173,8 +183,8 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
           <nav aria-label="breadcrumb" className="mb-4">
             <ol className="breadcrumb small">
               <li className="breadcrumb-item">
-                <Link href={user ? '/dashboard' : '/'} className="text-secondary text-decoration-none">
-                  {user ? 'Dasbor' : 'Beranda'}
+                <Link href="/" className="text-secondary text-decoration-none">
+                  Beranda
                 </Link>
               </li>
               <li className="breadcrumb-item">

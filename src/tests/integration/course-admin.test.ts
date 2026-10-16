@@ -1,6 +1,8 @@
 import { describe, it, expect, afterAll } from 'vitest';
 import { CourseRepository } from '@/lib/repositories/courseRepository';
 import { CourseService } from '@/lib/services/courseService';
+import { LearningService } from '@/lib/services/learningService';
+import { LearningRepository } from '@/lib/repositories/learningRepository';
 import { generateId } from '@/lib/utils/id';
 import { Course, Lesson } from '@/types/domain';
 import { redis } from '@/lib/redis';
@@ -89,6 +91,13 @@ describe('Course & Lesson Admin CRUD Integration', () => {
     const lessons = await CourseRepository.getLessonsForCourse(createdCourse.id);
     expect(lessons.length).toBe(1);
     expect(lessons[0].title).toBe('Pengenalan Testing');
+  });
+
+  it('does not record completion for a lesson inside a draft course', async () => {
+    const learnerId = generateId('draft-learner');
+    await expect(LearningService.completeLesson(learnerId, createdCourse.id, createdLesson.id))
+      .rejects.toThrow('INVALID_LESSON');
+    expect(await LearningRepository.isEnrolled(learnerId, createdCourse.id)).toBe(false);
   });
 
   it('updates lesson details and order', async () => {

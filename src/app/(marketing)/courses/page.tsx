@@ -1,13 +1,13 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { CourseRepository } from '@/lib/repositories/courseRepository';
-import { getCurrentUser } from '@/lib/auth/session';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
-import { StudentNavbar } from '@/components/layout/StudentNavbar';
 import { Footer } from '@/components/layout/Footer';
 import { CourseCatalogView } from '@/components/courses/CourseCatalogView';
 import { MOCK_COURSES } from '@/lib/mockData';
 import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Katalog Kelas Pemrograman Lengkap | KodeLuma',
@@ -43,7 +43,6 @@ export const metadata: Metadata = {
 };
 
 export default async function CoursesPage() {
-  const user = await getCurrentUser();
   let courses = await CourseRepository.listPublishedCourses();
 
   // Fallback to MOCK_COURSES if Redis has no courses yet
@@ -53,7 +52,7 @@ export default async function CoursesPage() {
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      {user ? <StudentNavbar user={user} /> : <PublicNavbar />}
+      <PublicNavbar />
 
       <main id="main-content" className="flex-grow-1 py-5">
         <div className="container">

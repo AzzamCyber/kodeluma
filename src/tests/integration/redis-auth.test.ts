@@ -5,6 +5,7 @@ import { CertificateRepository } from '@/lib/repositories/certificateRepository'
 import { hashPassword, verifyPassword } from '@/lib/utils/crypto';
 import { generateId, generateVerifyCode } from '@/lib/utils/id';
 import { User, Certificate } from '@/types/domain';
+import { redis } from '@/lib/redis';
 
 // Load .env.local
 if (process.loadEnvFile) {
@@ -54,17 +55,18 @@ describe('Redis Repositories & Business Rules Integration', () => {
   it('handles lesson completion idempotently with Redis SADD', async () => {
     const courseId = 'course-html-01';
     const lessonId = 'lesson-html-01';
+    try {
+      const first = await LearningRepository.completeLesson(testId, courseId, lessonId);
+      expect(first.alreadyCompleted).toBe(false);
 
-    // First completion
-    const first = await LearningRepository.completeLesson(testId, courseId, lessonId);
-    expect(first.alreadyCompleted).toBe(false);
+      const second = await LearningRepository.completeLesson(testId, courseId, lessonId);
+      expect(second.alreadyCompleted).toBe(true);
 
-    // Second completion (repeat) should be idempotent
-    const second = await LearningRepository.completeLesson(testId, courseId, lessonId);
-    expect(second.alreadyCompleted).toBe(true);
-
-    const completed = await LearningRepository.getCompletedLessons(testId, courseId);
-    expect(completed).toContain(lessonId);
+      const completed = await LearningRepository.getCompletedLessons(testId, courseId);
+      expect(completed).toContain(lessonId);
+    } finally {
+      await redis.del(`kl:v1:complete:${testId}:${courseId}:v1`, `kl:v1:user:${testId}:lesson-activity`);
+    }
   });
 
   it('issues and verifies certificates with unique codes', async () => {

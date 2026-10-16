@@ -125,11 +125,18 @@ Warna amber hanya **aksen kecil**, bukan CTA umum; warna primer adalah biru. Jan
 - Header `Pilih kelas pertamamu`; search+filter category/level; sort `Terbaru / A-Z`; responsive grid 3 desktop, 2 tablet, 1 mobile; pagination bukan load all.
 - Card standard; zero-result panel dengan clear-filter CTA; label `Segera hadir` kalau kelas belum published dan hanya jika memang sengaja ditampilkan.
 
+### Learning paths `/learning-paths`
+- Kartu jalur memakai permukaan, border, radius 16px, shadow, dan spacing skala sistem yang sudah ada. Header menampilkan ikon Lucide, nomor jalur, dan status; judul minimal 20px; deskripsi ringkas; pratinjau maksimal tiga langkah; satu aksi utama di footer.
+- Kartu langkah roadmap memakai nomor berurutan yang tegas, fokus materi, proyek praktik, dan tautan silabus hanya bila kelas benar-benar terbit di Redis. Kelas yang belum terbit diberi teks status tanpa affordance tautan.
+- Filter menampilkan jumlah jalur sesuai katalog yang tersedia. Aksi buka roadmap menggulir ke section dengan ID, menghormati reduced motion. Satu kolom mobile, dua tablet, tiga desktop; target sentuh minimal 44px.
+- Status tersedia dan jumlah kelas dihitung dari kelas published di Redis. Jangan menyebut jalur terverifikasi/terakreditasi atau menampilkan jumlah pelajaran dan durasi dari kurasi statis sebagai data live.
+
 ### Detail course `/courses/[slug]`
 - Breadcrumb, hero informasi judul/deskripsi/level/durasi, CTA enroll/continue, bullet outcomes; curriculum accordion; prerequisites; instructor label `Tim Kodeluma` sampai ada nama asli; FAQ singkat.
 
 ### Student dashboard `/dashboard`
 - Personal greeting, `Lanjutkan belajar` card paling atas, progress ring/bar real, active courses 2–3, recommended from published, small recent activity, quick link forum. Jangan terlalu banyak cards.
+- Riwayat pembelajaran menampilkan maksimal 6 pelajaran yang benar-benar ditandai selesai. Waktu penyelesaian baru memakai data Redis; data lama tanpa timestamp diberi label `Waktu belum tercatat`, bukan tanggal perkiraan. Gunakan kartu, border, radius, jarak, ikon, dan warna token yang sudah ada. Materi terbit dapat dibuka lagi; materi dari kelas arsip tetap terbaca tanpa tautan yang tidak tersedia.
 
 ### Lesson `/learn/[courseSlug]/[lessonSlug]`
 - Topbar breadcrumbs + course progress. Split desktop ~260 sidebar and main reading + optional right aside narrow untuk exercise; mobile collapsible toc. Content max 72ch; sticky bottom action `Tandai Selesai / Lanjutkan`; do not auto-mark lesson just by visiting.

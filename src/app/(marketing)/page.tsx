@@ -11,11 +11,11 @@ import { FaqSection } from '@/components/marketing/FaqSection';
 import { FinalCta } from '@/components/marketing/FinalCta';
 import { CourseCard } from '@/components/courses/CourseCard';
 import { MOCK_COURSES } from '@/lib/mockData';
-
-import { getCurrentUser } from '@/lib/auth/session';
 import { RealLearningFeatures } from '@/components/marketing/RealLearningFeatures';
 import { TechLogoGallery } from '@/components/marketing/TechLogoGallery';
 import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'KodeLuma — Belajar Coding dari Nol Sampai Mahir | Kurikulum Standar Industri',
@@ -88,8 +88,7 @@ const homeFaqJsonLd = {
   ],
 };
 
-export default async function HomePage() {
-  const user = await getCurrentUser();
+export default function HomePage() {
   const basicCourses = MOCK_COURSES.filter((course) => course.level === 'pemula');
 
   return (
@@ -98,11 +97,11 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqJsonLd) }}
       />
-      <PublicNavbar user={user} />
+      <PublicNavbar />
 
       <main id="main-content">
         {/* 1. Hero Section */}
-        <Hero user={user} />
+        <Hero />
 
         {/* 2. Real Learning Features (Belajar dengan cara yang lebih nyata) */}
         <RealLearningFeatures />

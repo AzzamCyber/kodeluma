@@ -103,6 +103,7 @@ Copy from `.env.example` into `.env.local` and do NOT commit `.env.local`. Cooki
 | Lesson | `kl:v1:lesson:{lid}` | `kl:v1:course:{cid}:lessons` ZSET order | lid, courseId, slug, title, bodyMarkdown, required, status, order |
 | Enrollment | `kl:v1:enroll:{uid}:{cid}` | `kl:v1:user:{uid}:enrollments` ZSET; `kl:v1:course:{cid}:students` SET | uid, cid, enrolledAt, curriculumVersion, status |
 | Completion | `kl:v1:complete:{uid}:{cid}:v{version}` SET of lesson IDs | counted by `SCARD` / `SISMEMBER` | immutable completed lesson membership |
+| Lesson activity | `kl:v1:user:{uid}:lesson-activity` ZSET | score = waktu selesai pertama (Unix ms), member = lesson ID | indeks permanen untuk 6 aktivitas terbaru; ditulis atomik hanya saat completion baru |
 | Quiz | `kl:v1:quiz:{qid}` | `kl:v1:course:{cid}:quiz` string | questions/answer keys server-only |
 | Quiz attempt | `kl:v1:quizresult:{uid}:{cid}:v{version}` | none | score, passed, attempts, updatedAt |
 | Project | `kl:v1:project:{pid}` | `kl:v1:projects:published` ZSET; `kl:v1:course:{cid}:projects` SET | pid, courseId, brief, requirements, status |

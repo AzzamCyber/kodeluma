@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { ResponsiveNavbar, type NavigationItem } from './ResponsiveNavbar';
@@ -14,7 +15,26 @@ const links: NavigationItem[] = [
   { label: 'Tentang', href: '/about' },
 ];
 
-export function PublicNavbar({ user }: PublicNavbarProps) {
+export function PublicNavbar({ user: initialUser }: PublicNavbarProps) {
+  const [currentUser, setCurrentUser] = useState(initialUser);
+
+  useEffect(() => {
+    if (initialUser !== undefined) return;
+    let isMounted = true;
+    fetch('/api/v1/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (isMounted && json?.data?.user) {
+          setCurrentUser(json.data.user);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [initialUser]);
+
+  const user = currentUser ?? initialUser;
   const destination = user?.role === 'admin' ? '/admin' : '/dashboard';
   const actions = user ? (
     <Link href={destination} className="kl-btn-primary d-inline-flex align-items-center justify-content-center gap-2 text-decoration-none">
