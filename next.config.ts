@@ -1,17 +1,16 @@
 import type { NextConfig } from 'next';
 
-// Keep production output separate from the live dev server. A build in .next
-// removes dev-only CSS chunks while next dev is still serving pages.
-const isolatedBuild = process.env.KODELUMA_ISOLATED_BUILD
-  || (process.env.NODE_ENV === 'production' ? 'build' : undefined);
+// Keep production output in standard '.next' directory for Vercel and production deployments.
+// Only use a custom isolated directory if explicitly requested via KODELUMA_ISOLATED_BUILD.
+const isolatedBuild = process.env.KODELUMA_ISOLATED_BUILD;
 const distDir = isolatedBuild && /^[a-z0-9-]{1,32}$/i.test(isolatedBuild)
   ? `.next-${isolatedBuild}`
-  : '.next';
+  : undefined;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   compress: true,
-  distDir,
+  ...(distDir ? { distDir } : {}),
   images: {
     formats: ['image/avif', 'image/webp'],
   },

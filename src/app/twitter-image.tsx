@@ -1,1 +1,5 @@
-export { default, alt, size, contentType, runtime } from './opengraph-image';
+import OpenGraphImage, { alt, size, contentType } from './opengraph-image';
+
+export const runtime = 'nodejs';
+export { alt, size, contentType };
+export default OpenGraphImage;
