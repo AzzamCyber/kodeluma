@@ -1,54 +1,64 @@
-'use client';
-
-import React, { useState, useMemo } from 'react';
-import { Search, BookOpen } from 'lucide-react';
+import React from 'react';
+import type { Metadata } from 'next';
+import { CourseRepository } from '@/lib/repositories/courseRepository';
+import { getCurrentUser } from '@/lib/auth/session';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
+import { StudentNavbar } from '@/components/layout/StudentNavbar';
 import { Footer } from '@/components/layout/Footer';
-import { CourseCard } from '@/components/courses/CourseCard';
-import { EmptyState } from '@/components/ui/EmptyState';
+import { CourseCatalogView } from '@/components/courses/CourseCatalogView';
 import { MOCK_COURSES } from '@/lib/mockData';
+import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
 
-export default function CoursesPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedLevel, setSelectedLevel] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'newest' | 'az'>('newest');
+export const metadata: Metadata = {
+  title: 'Katalog Kelas Pemrograman Lengkap | KodeLuma',
+  description:
+    'Jelajahi 22 kurikulum kelas coding standar industri: Frontend, Backend, Database, Cloud & DevOps, Pemrograman Dasar hingga Mahir dengan modul interaktif.',
+  alternates: {
+    canonical: '/courses',
+  },
+  openGraph: {
+    title: 'Katalog Kelas Pemrograman Lengkap | KodeLuma',
+    description:
+      'Pelajari teknologi web modern dari dasar. 22 kelas standar industri dengan latihan nyata dan sertifikat terverifikasi.',
+    url: 'https://kodeluma.azzamcodex.id/courses',
+    siteName: 'KodeLuma by Azzam Codex',
+    images: [
+      {
+        url: '/api/og?title=Katalog%20Kelas%20Pemrograman%20Lengkap&desc=22%20Kelas%20Standar%20Industri%20Frontend%2C%20Backend%2C%20Database%2C%20dan%20DevOps&badge=KATALOG%20KELAS',
+        width: 1200,
+        height: 630,
+        alt: 'Katalog Kelas KodeLuma',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Katalog Kelas Pemrograman Lengkap | KodeLuma',
+    description: '22 kelas coding standar industri berbahasa Indonesia.',
+    images: [
+      '/api/og?title=Katalog%20Kelas%20Pemrograman%20Lengkap&desc=22%20Kelas%20Standar%20Industri%20Frontend%2C%20Backend%2C%20Database%2C%20dan%20DevOps&badge=KATALOG%20KELAS',
+    ],
+    creator: '@azzamcodex',
+  },
+};
 
-  const filteredCourses = useMemo(() => {
-    return MOCK_COURSES.filter((course) => {
-      const matchSearch =
-        course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.summary.toLowerCase().includes(searchQuery.toLowerCase());
+export default async function CoursesPage() {
+  const user = await getCurrentUser();
+  let courses = await CourseRepository.listPublishedCourses();
 
-      const matchCategory =
-        selectedCategory === 'all' || course.category === selectedCategory;
-
-      const matchLevel =
-        selectedLevel === 'all' || course.level === selectedLevel;
-
-      return matchSearch && matchCategory && matchLevel;
-    }).sort((a, b) => {
-      if (sortBy === 'az') {
-        return a.title.localeCompare(b.title);
-      }
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-  }, [searchQuery, selectedCategory, selectedLevel, sortBy]);
-
-  const handleClearFilter = () => {
-    setSearchQuery('');
-    setSelectedCategory('all');
-    setSelectedLevel('all');
-  };
+  // Fallback to MOCK_COURSES if Redis has no courses yet
+  if (!courses || courses.length === 0) {
+    courses = MOCK_COURSES;
+  }
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      <PublicNavbar />
+      {user ? <StudentNavbar user={user} /> : <PublicNavbar />}
 
       <main id="main-content" className="flex-grow-1 py-5">
         <div className="container">
-          {/* Header Banner */}
-          <div className="mb-4">
+          <div className="row align-items-center g-3 mb-4">
+            <div className="col-md-8">
             <div className="kl-eyebrow">KATALOG KELAS KODELUMA</div>
             <h1 className="h2 fw-bold mb-2" style={{ color: 'var(--kl-ink)' }}>
               Pilih kelas pertamamu.
@@ -57,90 +67,11 @@ export default function CoursesPage() {
               Pelajari teknologi web modern dari dasar. Setiap modul dilengkapi materi teks mendalam,
               kuis evaluasi, dan proyek praktik nyata.
             </p>
+            </div>
+            <div className="col-md-4"><EditorialIllustration kind="courses" className="kl-page-art" /></div>
           </div>
 
-          {/* Filter and Search Bar */}
-          <div className="kl-card p-3 mb-4 bg-white border">
-            <div className="row g-3 align-items-center">
-              {/* Search input */}
-              <div className="col-lg-4 col-md-6">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0 text-muted">
-                    <Search size={16} />
-                  </span>
-                  <input
-                    type="text"
-                    className="form-control border-start-0 ps-0"
-                    placeholder="Cari materi atau topik..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    aria-label="Cari kelas"
-                  />
-                </div>
-              </div>
-
-              {/* Category selector */}
-              <div className="col-lg-3 col-md-3 col-6">
-                <select
-                  className="form-select"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  aria-label="Filter kategori topik"
-                >
-                  <option value="all">Semua Kategori</option>
-                  <option value="html">HTML</option>
-                  <option value="css">CSS</option>
-                  <option value="javascript">JavaScript</option>
-                </select>
-              </div>
-
-              {/* Level selector */}
-              <div className="col-lg-3 col-md-3 col-6">
-                <select
-                  className="form-select"
-                  value={selectedLevel}
-                  onChange={(e) => setSelectedLevel(e.target.value)}
-                  aria-label="Filter tingkat kesulitan"
-                >
-                  <option value="all">Semua Tingkat</option>
-                  <option value="pemula">Pemula</option>
-                  <option value="menengah">Menengah</option>
-                </select>
-              </div>
-
-              {/* Sort by */}
-              <div className="col-lg-2 col-md-12">
-                <select
-                  className="form-select"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as 'newest' | 'az')}
-                  aria-label="Urutkan kelas"
-                >
-                  <option value="newest">Terbaru</option>
-                  <option value="az">A - Z</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Course Grid / Empty State */}
-          {filteredCourses.length > 0 ? (
-            <div className="row g-4">
-              {filteredCourses.map((course) => (
-                <div key={course.id} className="col-lg-4 col-md-6">
-                  <CourseCard course={course} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              icon={BookOpen}
-              title="Kelas Tidak Ditemukan"
-              description="Belum ada kelas yang cocok. Coba kata kunci lain atau bersihkan filter pencarian."
-              actionText="Reset Filter Pencarian"
-              onAction={handleClearFilter}
-            />
-          )}
+          <CourseCatalogView initialCourses={courses} />
         </div>
       </main>
 

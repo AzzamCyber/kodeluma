@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Accordion from 'react-bootstrap/Accordion';
+import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
 
 export function FaqSection() {
   const faqs = [
@@ -31,6 +32,7 @@ export function FaqSection() {
     <section className="kl-section bg-white border-top">
       <div className="container">
         <div className="text-center mb-5">
+          <EditorialIllustration kind="questions" className="kl-section-art kl-section-art--center mb-3" />
           <div className="kl-eyebrow">PERTANYAAN UMUM</div>
           <h2 className="h1 fw-bold mb-3" style={{ color: 'var(--kl-ink)' }}>
             Hal yang sering ditanyakan.

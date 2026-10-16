@@ -2,7 +2,7 @@ export type Role = 'student' | 'admin';
 export type UserStatus = 'active' | 'suspended';
 export type PublishStatus = 'draft' | 'published' | 'archived';
 export type CourseLevel = 'pemula' | 'menengah';
-export type CourseCategory = 'html' | 'css' | 'javascript' | 'python';
+export type CourseCategory = 'html' | 'css' | 'javascript' | 'python' | 'typescript' | 'java' | 'cplusplus' | 'sql' | 'nodejs' | 'react' | 'go' | 'php' | 'git' | 'docker' | 'postgresql' | 'redis' | 'linux';
 export type SubmissionStatus = 'draft' | 'submitted' | 'needs_revision' | 'approved';
 
 export interface User {

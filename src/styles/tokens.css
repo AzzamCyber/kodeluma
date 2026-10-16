@@ -1,4 +1,4 @@
-/* Kodeluma design tokens — version 1.0, synchronized with 02_DESIGN.md */
+/* Kodeluma design tokens — version 1.1, synchronized with 02_DESIGN.md */
 :root {
   --kl-ink: #10243A;
   --kl-primary: #2563EB;
@@ -26,9 +26,19 @@
   --kl-shadow-card: 0 8px 28px rgba(16, 36, 58, 0.05);
   --kl-shadow-card-hover: 0 16px 42px rgba(16, 36, 58, 0.10);
 
-  --kl-font-heading: var(--font-jakarta), 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-  --kl-font-body: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
-  --kl-font-code: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace;
+  /* Certificate document tokens, aligned with the core palette and spacing scale. */
+  --kl-cert-paper: var(--kl-surface);
+  --kl-cert-ink: var(--kl-ink);
+  --kl-cert-accent: var(--kl-amber);
+  --kl-cert-inset: 14px;
+  --kl-cert-sheet-padding: 48px;
+  --kl-cert-print-padding: 18mm;
+  --kl-cert-preview-width: 700px;
+  --kl-cert-tab-width: 238px;
+
+  --kl-font-heading: var(--font-space-grotesk, 'Space Grotesk'), 'Inter', system-ui, sans-serif;
+  --kl-font-body: var(--font-inter, 'Inter'), system-ui, -apple-system, sans-serif;
+  --kl-font-code: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace;
 
   /* Bootstrap theme override overrides */
   --bs-primary: #2563EB;
@@ -47,6 +57,7 @@ body {
   background: var(--kl-bg);
   color: var(--kl-text);
   font-family: var(--kl-font-body);
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -55,6 +66,17 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--kl-font-heading);
   font-weight: 700;
   letter-spacing: -0.025em;
+}
+
+h1, h2 { letter-spacing: -0.04em; text-wrap: balance; }
+h3, h4 { letter-spacing: -0.03em; }
+h1 { line-height: 1.14; }
+h2 { line-height: 1.2; }
+h3, h4 { line-height: 1.3; }
+
+/* Bootstrap's heading utilities keep their size but inherit the brand face. */
+.h1, .h2, .h3, .h4, .h5, .h6, .display-6 {
+  font-family: var(--kl-font-heading);
 }
 
 button, a, input, textarea, select {
@@ -160,6 +182,83 @@ button, a, input, textarea, select {
   font-family: var(--kl-font-code);
   font-size: 13.5px;
   line-height: 1.7;
+}
+
+/* Kodeluma Animated Logo Loader */
+@keyframes kl-logo-breathe {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 6px 16px rgba(37, 99, 235, 0.15));
+  }
+  50% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 12px 26px rgba(37, 99, 235, 0.28));
+  }
+}
+
+@keyframes kl-logo-orbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes kl-pulse-glow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes kl-progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(40%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.kl-loader-logo-wrapper {
+  animation: kl-logo-breathe 2.4s ease-in-out infinite;
+}
+
+.kl-loader-orbit-ring {
+  animation: kl-logo-orbit 3s linear infinite;
+}
+
+.kl-loader-pulse {
+  animation: kl-pulse-glow 2.4s ease-in-out infinite;
+}
+
+.kl-loader-progress-bar {
+  overflow: hidden;
+  position: relative;
+  background: var(--kl-border);
+  height: 4px;
+  border-radius: 999px;
+  width: 140px;
+}
+
+.kl-loader-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  background: linear-gradient(90deg, var(--kl-primary) 0%, var(--kl-amber) 100%);
+  border-radius: 999px;
+  animation: kl-progress-indeterminate 1.5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

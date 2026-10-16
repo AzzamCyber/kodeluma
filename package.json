@@ -10,10 +10,13 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "seed": "tsx scripts/seed.ts",
-    "seed:admin": "tsx scripts/seed-admin.ts"
+    "seed:admin": "tsx scripts/seed-admin.ts",
+    "demo:admin": "tsx scripts/complete-admin-demo.ts",
+    "postinstall": "node scripts/patch-next-readlink.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@lottiefiles/dotlottie-react": "^0.20.0",
     "@node-rs/argon2": "^2.2.2",
     "@upstash/ratelimit": "^2.0.5",
     "@upstash/redis": "^1.34.4",

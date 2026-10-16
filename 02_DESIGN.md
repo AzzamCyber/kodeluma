@@ -1,6 +1,6 @@
 # DESIGN.md — KODELUMA DESIGN SYSTEM
 
-**Version:** 1.0 · **Status:** LOCKED FOR MVP · **Brand:** Kodeluma by Azzam Codex
+**Version:** 1.2 · **Status:** LOCKED FOR MVP · **Brand:** Kodeluma by Azzam Codex
 
 ## 0. Prinsip desain — dibaca sebelum komponen dibuat
 Kodeluma harus terlihat seperti produk EdTech kelas profesional: hangat, cerdas, ramah pemula, premium, fokus konten. **Bukan neon, bukan cyberpunk, bukan gaming UI, bukan glassmorphism, bukan landing page AI generik.** Keindahan datang dari hirarki tipografi, white space, konsistensi komponen, ilustrasi kode edukatif yang terkendali, dan interaksi yang halus. Gunakan UI **light-mode first**; editor boleh dark untuk keterbacaan sintaks.
@@ -46,7 +46,7 @@ Kodeluma harus terlihat seperti produk EdTech kelas profesional: hangat, cerdas,
 Warna amber hanya **aksen kecil**, bukan CTA umum; warna primer adalah biru. Jangan memakai gradient sangat saturated. Landing hero boleh wash gradient sangat lembut `#FFFFFF -> #F1F6FF`, bukan gradient neon. Teks di putih harus kontras WCAG AA; verifikasi kombinasi sebelum dipakai.
 
 ## 3. Tipografi
-- **Headings:** `Plus Jakarta Sans`, fallback `Inter, system-ui, sans-serif`, weight 600/700/800.
+- **Headings / display:** `Space Grotesk`, fallback `Inter, system-ui, sans-serif`, weight 500/600/700. Dipakai untuk judul halaman, judul kartu, dan angka statistik agar identitas lebih tegas; teks panjang tetap memakai Inter.
 - **Body/UI:** `Inter`, fallback `system-ui, -apple-system, sans-serif`, weight 400/500/600.
 - **Code:** `JetBrains Mono`, fallback `ui-monospace, SFMono-Regular, monospace`.
 - H1 desktop 52px / line-height 1.14 / letter -0.045em; tablet 42px; mobile 34px. Max width text H1 13ch untuk landing.
@@ -54,6 +54,7 @@ Warna amber hanya **aksen kecil**, bukan CTA umum; warna primer adalah biru. Jan
 - Body 16px / 1.65; small 14px / 1.5; label 13px/600; eyebrow 12px/700, uppercase, letter-spacing .09em.
 - Long-form lesson text: max-width 72ch, line-height 1.75. Code font 13–14px / 1.65, scroll secara horizontal.
 - Jangan memakai all caps untuk heading panjang. Angka statistik bisa tabular lining.
+- Hirarki heading: H1/H2 memakai tracking rapat dan line-height ringkas; H3/H4 tetap mudah dibaca. Eyebrow pendek memakai Inter uppercase dan aksen garis kecil; jangan menjadikan paragraf atau label formulir all caps.
 
 ## 4. Spacing / layout system
 - Base spacing 4px, gunakan hanya `4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 112` px.
@@ -82,6 +83,10 @@ Warna amber hanya **aksen kecil**, bukan CTA umum; warna primer adalah biru. Jan
 - Main feature card minimal height konsisten pada row yang sama.
 ### Inputs
 - Height 46–48px; border; label **di atas** input; placeholder bukan label; error berteks + aria-describedby; icon inline hanya bila membantu.
+### Select / dropdown pilihan
+- Gunakan satu komponen React Bootstrap terkontrol untuk daftar pilihan pada katalog, forum, Code Lab, dan admin. Tombol 48px (40px untuk toolbar ringkas), radius 12px, permukaan putih, border token; ikon panah Lucide di kanan.
+- Menu putih dengan radius 12px, border dan bayangan kartu token, padding 8px, maksimal 288px lalu scroll. Opsi tinggi minimal 40px; hover/fokus/terpilih memakai `--kl-primary-soft` dan `--kl-primary`, dengan tanda centang Lucide untuk opsi aktif.
+- Label tampak atau nama aksesibel wajib tersedia. Panah atas/bawah, Enter, Escape, dan klik di luar harus tetap berfungsi; disabled harus jelas. Gerak panah maksimal 150ms dan ikuti reduced motion.
 ### Badges
 - XP/gold `--kl-amber` dipakai sangat jarang; kategori kursus blue-soft; level neutral/ink; complete success-soft.
 ### Navigation
@@ -92,10 +97,15 @@ Warna amber hanya **aksen kecil**, bukan CTA umum; warna primer adalah biru. Jan
 - Bar 6–8px, track `#E8EDF4`, fill primary, label % real, `aria-valuenow`, jangan grafik palsu.
 ### Code editor / lesson player
 - Editor dark panel dengan toolbar netral, filename, tombol `Salin Kode`, `Jalankan Preview` hanya jika benar-benar supported; monospace 13–14px. Lesson content tetap light. Sidebar daftar lesson sticky pada desktop, collapsible pada mobile.
+- `/lab` memakai halaman terang `--kl-bg` dengan intro editorial singkat, Lottie praktik satu kali, lalu workspace dua panel. Navigasi bahasa dan toolbar berada pada surface putih; hanya editor dan area konsol memakai `--kl-code-bg`. Tombol Jalankan memakai primary biru, status memakai warna semantik token. Panel radius 16px, border token, shadow kartu halus; tinggi editor/output 560px desktop dan 440px mobile.
+- Tab dan panel masuk dengan opacity/translateY paling jauh 12px selama 280ms, satu kali saat halaman dibuka. Pergantian tab memakai transisi 160ms pada warna/border saja. Tidak ada animasi berulang di area pengetikan; `prefers-reduced-motion` menampilkan keadaan akhir tanpa gerak.
+- Template Lab memakai `SelectField` global. Nama bahasa dan catatan kemampuan harus sesuai runner yang tersedia; simulasi diberi label jelas. Jangan tampilkan versi compiler, waktu, atau penggunaan memori yang tidak terukur. Kontrol ikon memiliki nama aksesibel dan target sentuh minimal 40px pada toolbar, 44px pada mobile.
 ### Tables
 - Admin: header sticky bila tinggi, zebra sangat halus, sorting dan filter eksplisit, `overflow-x:auto` pada mobile, empty state.
 ### Dialog/toast
 - Modal React Bootstrap terkendali; title, close, keyboard escape, focus trap; toast aria-live polite; destructive modal wajib konfirmasi.
+- Feedback global: toast di kanan atas memakai surface, border, shadow, radius, dan warna dari token Kodeluma; modal konfirmasi tetap memakai React Bootstrap. Lottie `feedback-spark.json` hanya bermain sekali selama 1,4 detik sebagai aksen di belakang ikon Lucide status. Reduced motion menampilkan lingkaran statis. Toast sukses/info menghilang setelah 4,5 detik; error setelah 6,5 detik; konfirmasi tidak menutup otomatis.
+- Formulir HTML yang gagal validasi menampilkan pesan Kodeluma dan memfokuskan kolom pertama yang bermasalah tanpa bubble validasi bawaan browser.
 
 ## 7. Layout halaman spesifik
 ### Landing `/`
@@ -132,6 +142,10 @@ Warna amber hanya **aksen kecil**, bukan CTA umum; warna primer adalah biru. Jan
 
 ### Certificates `/certificates`
 - Completed course cards, verify code, print/download if eligible; explain Kodeluma completion certificates are **not government/university accredited**.
+- Certificate uses the original horizontal KodeLuma logo, a restrained ink/blue/amber layout, real recipient/course/issue date/version/verification code from Redis, and an A4 landscape print sheet. Verification links use the active site origin.
+- Label it as a KodeLuma course-completion record. Do not imply external accreditation, national registration, institutional signatures, industry certification, or skill/project assessment unless independently proven by the issuance contract. Revoked records must show their status prominently.
+- Certificate collection must have a useful empty state, accessible search/selection, 44px touch targets, mobile layout, and reduced-motion support.
+- On `/certificates`, present the collection as a horizontal, scrollable row of course tabs with visible previous/next controls and search. Keep the selected A4 preview centered below the tabs at a screen-friendly width. Offer an accessible native-dialog full view when the viewport cannot show the whole preview; the print sheet keeps its A4 landscape dimensions.
 
 ### Admin dashboard `/admin`
 - Functional analytics from Redis indexes. 4 key stats max: total users, courses published, enrollments, completions. Graph optional and grounded in event data; never hardcode fake numbers. Content management CRUD pages share same `DataTable`, `FormField`, `ConfirmDialog`, `EmptyState`.

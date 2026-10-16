@@ -1,18 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
 
 export function FinalCta() {
   return (
     <section className="py-5" style={{ backgroundColor: 'var(--kl-bg)' }}>
       <div className="container py-4">
         <div
-          className="p-5 text-center rounded-4 shadow-sm"
+          className="p-4 p-md-5 text-center rounded-4 shadow-sm"
           style={{
             backgroundColor: 'var(--kl-ink)',
             color: '#FFFFFF',
           }}
         >
+          <EditorialIllustration kind="launch" className="kl-cta-art mb-3" tone="dark" />
           <div
             className="small fw-bold text-uppercase mb-3"
             style={{ color: '#93C5FD', letterSpacing: '0.12em' }}

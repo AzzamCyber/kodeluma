@@ -1,8 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import { BookOpen, Clock, ArrowRight } from 'lucide-react';
-import { Course } from '@/types/domain';
+import Image from 'next/image';
+import { BookOpen, Clock, ArrowRight, Code2 } from 'lucide-react';
+import { Course, CourseCategory } from '@/types/domain';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { TECH_REGISTRY } from '@/components/ui/TechLogo';
 
 interface CourseCardProps {
   course: Course;
@@ -11,48 +13,77 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course, progressPercent, isEnrolled = false }: CourseCardProps) {
-  // Category color highlights
-  const categoryAccents = {
-    html: { bg: '#EFF6FF', text: '#2563EB', label: 'HTML' },
-    css: { bg: '#F5F3FF', text: '#7C3AED', label: 'CSS' },
-    javascript: { bg: '#FEF3C7', text: '#B45309', label: 'JavaScript' },
-    python: { bg: '#ECFDF5', text: '#059669', label: 'Python' },
+  const categoryLabels: Record<CourseCategory, string> = {
+    html: 'HTML',
+    css: 'CSS',
+    javascript: 'JavaScript',
+    python: 'Python',
+    typescript: 'TypeScript',
+    java: 'Java',
+    cplusplus: 'C++',
+    sql: 'SQL',
+    nodejs: 'Node.js',
+    react: 'React',
+    go: 'Go (Golang)',
+    php: 'PHP',
+    git: 'Git',
+    docker: 'Docker',
+    postgresql: 'PostgreSQL',
+    redis: 'Redis',
+    linux: 'Linux',
   };
-
-  const accent = categoryAccents[course.category] || categoryAccents.html;
+  const techSlugs: Record<CourseCategory, string> = {
+    html: 'html5',
+    css: 'css3',
+    javascript: 'javascript',
+    python: 'python',
+    typescript: 'typescript',
+    java: 'java',
+    cplusplus: 'cplusplus',
+    sql: 'sql',
+    nodejs: 'nodejs',
+    react: 'react',
+    go: 'go',
+    php: 'php',
+    git: 'git',
+    docker: 'docker',
+    postgresql: 'postgresql',
+    redis: 'redis',
+    linux: 'linux',
+  };
+  const categoryLabel = categoryLabels[course.category];
+  const technology = TECH_REGISTRY[techSlugs[course.category]];
 
   return (
     <article className="kl-card h-100 d-flex flex-column p-0 overflow-hidden kl-card-interactive position-relative">
       {/* Cover / Header Section */}
-      <div
-        className="d-flex align-items-center justify-content-between p-4"
-        style={{
-          backgroundColor: accent.bg,
-          color: accent.text,
-          borderBottom: '1px solid var(--kl-border)',
-          minHeight: '130px',
-        }}
-      >
-        <div>
-          <span
-            className="badge rounded-pill fw-bold text-uppercase px-3 py-2"
-            style={{
-              backgroundColor: '#FFFFFF',
-              color: accent.text,
-              fontSize: '11px',
-              letterSpacing: '0.05em',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
-            }}
-          >
-            {accent.label} &middot; {course.level === 'pemula' ? 'Pemula' : 'Menengah'}
+      <div className="kl-course-cover d-flex flex-column justify-content-between p-4">
+        <div className="kl-course-cover-top d-flex justify-content-between align-items-start gap-3">
+          <span className="kl-course-category">{categoryLabel} &middot; {course.level === 'pemula' ? 'Pemula' : 'Menengah'}</span>
+          <span className="kl-course-cover-brand" aria-hidden="true">
+            <Image src="/brand/kodeluma-icon.png" alt="" width={24} height={24} />
+            <span>KODELUMA</span>
           </span>
         </div>
-        <div className="fs-3 fw-bold opacity-75">{accent.label}</div>
+        <div className="kl-course-cover-technology" aria-hidden="true">
+          {technology ? (
+            <Image src={technology.localPath} alt="" width={108} height={108} />
+          ) : (
+            <Code2 size={88} strokeWidth={1.75} />
+          )}
+        </div>
+        <div className="kl-course-cover-bottom d-flex justify-content-between align-items-end gap-3">
+          <div>
+            <span className="kl-course-cover-kicker" aria-hidden="true">LEARN / CODE / CREATE</span>
+            <div className="kl-course-cover-title" aria-hidden="true">{categoryLabel}</div>
+          </div>
+          <span className="kl-course-cover-mark" aria-hidden="true">KL.</span>
+        </div>
       </div>
 
       {/* Body Content */}
       <div className="p-4 d-flex flex-column flex-grow-1">
-        <h3 className="h5 fw-bold mb-2" style={{ color: 'var(--kl-ink)' }}>
+        <h3 className="h5 fw-bold mb-2">
           {course.title}
         </h3>
         <p
@@ -66,7 +97,7 @@ export function CourseCard({ course, progressPercent, isEnrolled = false }: Cour
         <div className="d-flex align-items-center gap-3 text-secondary small mb-3 pb-3 border-bottom">
           <div className="d-flex align-items-center gap-1">
             <BookOpen size={15} strokeWidth={1.75} />
-            <span>{course.lessonsCount ?? 3} Pelajaran</span>
+            <span>{course.lessonsCount ?? 0} Pelajaran</span>
           </div>
           <div className="d-flex align-items-center gap-1">
             <Clock size={15} strokeWidth={1.75} />
@@ -79,9 +110,9 @@ export function CourseCard({ course, progressPercent, isEnrolled = false }: Cour
           <div>
             <ProgressBar value={progressPercent} label="Progres Belajar" />
             <Link
-              href={`/learn/${course.slug}/apa-itu-html`}
+              href={`/courses/${course.slug}`}
               className="stretched-link text-decoration-none"
-              aria-label={`Lanjutkan materi ${course.title}`}
+              aria-label={`Lihat detail dan progres kursus ${course.title}`}
             />
           </div>
         ) : (

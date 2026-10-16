@@ -2,11 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { MOCK_COURSES, MOCK_LESSONS, MOCK_QUIZZES, MOCK_PROJECTS } from '@/lib/mockData';
 
 describe('Domain Models & Curriculum Seed Tests', () => {
-  it('should have 3 published courses for MVP', () => {
-    expect(MOCK_COURSES.length).toBe(3);
+  it('should have at least 3 published courses for MVP', () => {
+    expect(MOCK_COURSES.length).toBeGreaterThanOrEqual(3);
     for (const course of MOCK_COURSES) {
       expect(course.status).toBe('published');
-      expect(course.level).toBe('pemula');
+      expect(['pemula', 'menengah']).toContain(course.level);
       expect(course.slug).toMatch(/^[a-z0-9-]+$/);
     }
   });

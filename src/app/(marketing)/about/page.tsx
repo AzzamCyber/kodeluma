@@ -1,8 +1,43 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
 import { Footer } from '@/components/layout/Footer';
 import { Code, CheckCircle, ShieldCheck, Heart } from 'lucide-react';
+import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
+
+export const metadata: Metadata = {
+  title: 'Tentang KodeLuma — Membuka Akses Coding untuk Siapa Saja',
+  description:
+    'Kenali misi KodeLuma by Azzam Codex: platform edukasi coding pemula berbahasa Indonesia yang dirancang ramah pemula, terstruktur, dan berbasis pembuktian kemampuan nyata.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'Tentang KodeLuma — Platform Edukasi Coding Indonesia',
+    description:
+      'Membuka akses belajar coding tanpa jargon rumit. Materi terarah, latihan nyata, dan sertifikat terverifikasi.',
+    url: 'https://kodeluma.azzamcodex.id/about',
+    siteName: 'KodeLuma by Azzam Codex',
+    images: [
+      {
+        url: '/api/og?title=Tentang%20KodeLuma&desc=Membuka%20Akses%20Coding%20untuk%20Siapa%20Saja%20Berbahasa%20Indonesia&badge=TENTANG%20KAMI',
+        width: 1200,
+        height: 630,
+        alt: 'Tentang KodeLuma',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tentang KodeLuma | Azzam Codex',
+    description: 'Membuka akses coding untuk siapa saja berbahasa Indonesia.',
+    images: [
+      '/api/og?title=Tentang%20KodeLuma&desc=Membuka%20Akses%20Coding%20untuk%20Siapa%20Saja%20Berbahasa%20Indonesia&badge=TENTANG%20KAMI',
+    ],
+    creator: '@azzamcodex',
+  },
+};
 
 export default function AboutPage() {
   return (
@@ -12,6 +47,7 @@ export default function AboutPage() {
       <main id="main-content" className="flex-grow-1 py-5">
         <div className="container">
           <div className="text-center mb-5">
+            <EditorialIllustration kind="community" className="kl-section-art kl-section-art--center mb-3" />
             <div className="kl-eyebrow">TENTANG KODELUMA</div>
             <h1 className="h1 fw-bold mb-3" style={{ color: 'var(--kl-ink)' }}>
               Membuka Akses Coding untuk Siapa Saja
@@ -98,7 +134,7 @@ export default function AboutPage() {
             <p className="text-secondary small mb-4" style={{ lineHeight: 1.75 }}>
               Proyek ini dikembangkan sebagai karya Project-Based Learning (PBL) Workshop Desain Web
               (Topik No. 19: Platform Belajar Coding untuk Pemula). Dibangun dengan fondasi teknologi
-              modern: Next.js App Router, TypeScript, Bootstrap 5, dan Upstash Redis.
+              modern: Next.js App Router, TypeScript, Bootstrap 5, dan arsitektur data in-memory performa tinggi.
             </p>
             <Link href="/courses" className="kl-btn-primary text-decoration-none">
               Mulai Perjalanan Coding-mu Sekarang

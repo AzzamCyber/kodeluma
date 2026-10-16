@@ -1,5 +1,6 @@
 import React from 'react';
 import { BookOpen, Code2, Award } from 'lucide-react';
+import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
 
 export function LearningSteps() {
   const steps = [
@@ -30,15 +31,18 @@ export function LearningSteps() {
     <section className="kl-section" style={{ backgroundColor: 'var(--kl-surface-soft)' }}>
       <div className="container">
         {/* Section Header */}
-        <div className="text-center mb-5">
-          <div className="kl-eyebrow">CARA BELAJAR DI KODELUMA</div>
-          <h2 className="h1 fw-bold mb-3" style={{ color: 'var(--kl-ink)' }}>
-            Tiga langkah terarah untuk berkembang.
-          </h2>
-          <p className="kl-lead mx-auto" style={{ maxWidth: '580px' }}>
-            Kamu tidak perlu bingung harus mulai dari mana. Ikuti langkah demi langkah yang sudah
-            disusun khusus bagi yang baru pertama kali menyentuh kode.
-          </p>
+        <div className="row align-items-center g-4 mb-5">
+          <div className="col-lg-7">
+            <div className="kl-eyebrow">CARA BELAJAR DI KODELUMA</div>
+            <h2 className="h1 fw-bold mb-3" style={{ color: 'var(--kl-ink)' }}>
+              Tiga langkah terarah untuk berkembang.
+            </h2>
+            <p className="kl-lead mb-0" style={{ maxWidth: '580px' }}>
+              Kamu tidak perlu bingung harus mulai dari mana. Ikuti langkah demi langkah yang sudah
+              disusun khusus bagi yang baru pertama kali menyentuh kode.
+            </p>
+          </div>
+          <div className="col-lg-5"><EditorialIllustration kind="steps" className="kl-section-art" /></div>
         </div>
 
         {/* 3 Step Cards */}

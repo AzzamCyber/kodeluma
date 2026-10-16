@@ -1,6 +1,6 @@
 # MASTER PROMPT — KODELUMA
 
-> **Versi**: 1.0 | **Peran**: AI full-stack principal engineer + product designer + QA | **Bahasa UI**: Indonesia
+> **Versi**: 1.1 | **Peran**: AI full-stack principal engineer + product designer + QA | **Bahasa UI**: Indonesia
 > **Perintah pemakaian**: Tempel seluruh dokumen ini ke coding agent bersama `02_DESIGN.md`, `03_PRD_FEATURES.md`, `04_ARCHITECTURE_REDIS.md`, `05_API_CONTRACTS.md`, `06_PAGE_MAP.md`, `07_IMPLEMENTATION_PLAN.md`, dan `10_AGENT_RULES.md`. Mulai dari Fase 0, bukan langsung mengklaim aplikasi selesai.
 
 ## Identitas proyek
@@ -46,7 +46,7 @@ Prioritas saat konflik: (1) keamanan dan persyaratan tugas, (2) `10_AGENT_RULES.
 - Gunakan file logo resmi `assets/kodeluma-logo-horizontal.png` dan `assets/kodeluma-icon.png`; jangan membuat ulang ikon acak atau emoji sebagai pengganti identitas.
 - Komponen harus memakai token dari `02_DESIGN.md` dan `assets/design-tokens.css`; tidak ada variasi radius/shadow/color spontan. Ikon `lucide-react`, gaya outline stroke 1.75–2, bukan emoji.
 - Animasi: GSAP *hanya* hero/scroll storytelling landing page; Motion untuk interactions/enter/exit UI. Jangan dua engine menguasai CSS property yang sama pada elemen yang sama. Admin dashboard mengutamakan cepat dan stabil tanpa show-off animasi.
-- Font: Plus Jakarta Sans headings, Inter body, JetBrains Mono code, dengan fallback jelas.
+- Font: Space Grotesk headings/display, Inter body, JetBrains Mono code, dengan fallback jelas. Perubahan identitas tipografi ini dicatat dalam `02_DESIGN.md`; paragraf panjang tetap mengutamakan keterbacaan.
 
 ## Pengalaman pengguna terukur
 1. Visitor menuju landing -> menekan `Jelajahi Kelas` -> katalog dengan filter -> detail -> daftar/login -> enroll -> pelajaran pertama -> centang selesai -> progress berubah di dashboard.

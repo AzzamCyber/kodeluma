@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -10,7 +11,11 @@ import {
   ArrowRight,
   ShieldCheck,
 } from 'lucide-react';
+import { getCurrentUser } from '@/lib/auth/session';
+import { CourseRepository } from '@/lib/repositories/courseRepository';
+import { ProjectRepository } from '@/lib/repositories/projectRepository';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
+import { StudentNavbar } from '@/components/layout/StudentNavbar';
 import { Footer } from '@/components/layout/Footer';
 import { MOCK_COURSES, MOCK_LESSONS, MOCK_QUIZZES, MOCK_PROJECTS } from '@/lib/mockData';
 
@@ -18,21 +23,149 @@ interface CourseDetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateMetadata({ params }: CourseDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  let course = await CourseRepository.findCourseBySlug(slug);
+  if (!course) {
+    course = MOCK_COURSES.find((c) => c.slug === slug) || null;
+  }
+
+  if (!course) {
+    return {
+      title: 'Kelas Tidak Ditemukan',
+      description: 'Kelas pemrograman yang Anda cari tidak tersedia di katalog KodeLuma.',
+    };
+  }
+
+  const categoryName = course.category ? course.category.toUpperCase() : 'PEMROGRAMAN';
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(course.title)}&desc=${encodeURIComponent(course.description)}&badge=${encodeURIComponent(categoryName)}`;
+
+  return {
+    title: `${course.title} — Silabus & Proyek Praktik`,
+    description: course.description,
+    alternates: {
+      canonical: `/courses/${course.slug}`,
+    },
+    openGraph: {
+      type: 'article',
+      locale: 'id_ID',
+      url: `https://kodeluma.azzamcodex.id/courses/${course.slug}`,
+      siteName: 'KodeLuma by Azzam Codex',
+      title: `${course.title} — Belajar & Praktik dari Nol`,
+      description: course.description,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: course.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${course.title} | KodeLuma`,
+      description: course.description,
+      images: [ogImageUrl],
+      creator: '@azzamcodex',
+    },
+  };
+}
+
 export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
   const { slug } = await params;
-  const course = MOCK_COURSES.find((c) => c.slug === slug);
+  const user = await getCurrentUser();
+
+  // Try Redis first, fallback to mock data
+  let course = await CourseRepository.findCourseBySlug(slug);
+  let lessons = course ? await CourseRepository.getLessonsForCourse(course.id) : [];
+  let quiz = course ? await CourseRepository.getQuizForCourse(course.id) : null;
+
+  if (!course) {
+    course = MOCK_COURSES.find((c) => c.slug === slug) || null;
+    if (course) {
+      lessons = MOCK_LESSONS[course.id] || [];
+      quiz = MOCK_QUIZZES[course.id] || null;
+    }
+  }
 
   if (!course) {
     notFound();
   }
 
-  const lessons = MOCK_LESSONS[course.id] || [];
-  const quiz = MOCK_QUIZZES[course.id];
-  const project = MOCK_PROJECTS.find((p) => p.courseId === course.id);
+  const projects = await ProjectRepository.listPublishedProjects();
+  let project = projects.find((p) => p.courseId === course?.id);
+  if (!project) {
+    project = MOCK_PROJECTS.find((p) => p.courseId === course?.id);
+  }
+
+  const courseJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: course.title,
+    description: course.description,
+    courseCode: course.id,
+    provider: {
+      '@type': 'Organization',
+      name: 'KodeLuma by Azzam Codex',
+      sameAs: 'https://kodeluma.azzamcodex.id',
+    },
+    educationalCredentialAwarded: 'Sertifikat Kelulusan Resmi KodeLuma',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'IDR',
+      category: 'Free',
+      availability: 'https://schema.org/InStock',
+    },
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'Online',
+      inLanguage: 'id',
+    },
+    syllabusSections: lessons.map((l, index) => ({
+      '@type': 'Syllabus',
+      name: `${index + 1}. ${l.title}`,
+      description: l.summary || l.title,
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Beranda',
+        item: 'https://kodeluma.azzamcodex.id',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Katalog Kelas',
+        item: 'https://kodeluma.azzamcodex.id/courses',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: course.title,
+        item: `https://kodeluma.azzamcodex.id/courses/${course.slug}`,
+      },
+    ],
+  };
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      <PublicNavbar />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      {user ? <StudentNavbar user={user} /> : <PublicNavbar />}
 
       <main id="main-content" className="flex-grow-1 py-5">
         <div className="container">
@@ -40,8 +173,8 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
           <nav aria-label="breadcrumb" className="mb-4">
             <ol className="breadcrumb small">
               <li className="breadcrumb-item">
-                <Link href="/" className="text-secondary text-decoration-none">
-                  Beranda
+                <Link href={user ? '/dashboard' : '/'} className="text-secondary text-decoration-none">
+                  {user ? 'Dasbor' : 'Beranda'}
                 </Link>
               </li>
               <li className="breadcrumb-item">

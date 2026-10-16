@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { EditorialIllustration } from '@/components/ui/EditorialIllustration';
 
 export function PathRoadmap() {
   const roadmapStages = [
@@ -36,15 +37,18 @@ export function PathRoadmap() {
   return (
     <section className="kl-section bg-white border-top">
       <div className="container">
-        <div className="text-center mb-5">
-          <div className="kl-eyebrow">ALUR BELAJAR SISTEMATIS</div>
-          <h2 className="h1 fw-bold mb-3" style={{ color: 'var(--kl-ink)' }}>
-            Kurikulum terarah dari nol sampai bisa.
-          </h2>
-          <p className="kl-lead mx-auto" style={{ maxWidth: '600px' }}>
-            Jangan membuang waktu melompat-lompat materi. Kodeluma menyusun tahapan belajar yang
-            saling menyambung secara logis.
-          </p>
+        <div className="row align-items-center g-4 mb-5">
+          <div className="col-lg-7">
+            <div className="kl-eyebrow">ALUR BELAJAR SISTEMATIS</div>
+            <h2 className="h1 fw-bold mb-3" style={{ color: 'var(--kl-ink)' }}>
+              Kurikulum terarah dari nol sampai bisa.
+            </h2>
+            <p className="kl-lead mb-0" style={{ maxWidth: '600px' }}>
+              Jangan membuang waktu melompat-lompat materi. Kodeluma menyusun tahapan belajar yang
+              saling menyambung secara logis.
+            </p>
+          </div>
+          <div className="col-lg-5"><EditorialIllustration kind="roadmap" className="kl-section-art" /></div>
         </div>
 
         <div className="row g-4">
